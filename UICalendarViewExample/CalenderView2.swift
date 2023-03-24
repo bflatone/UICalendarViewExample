@@ -37,7 +37,7 @@ struct CalendarView2: UIViewRepresentable {
         return CalendarCoordinator(swiftUIView: self)
     }
     
-    func makeUIView(context: Context) -> some UICalendarView {
+    func makeUIView(context: Context) -> UIView {
         let calendarView = UICalendarView()
                         
         calendarView.calendar = calendar
@@ -48,32 +48,32 @@ struct CalendarView2: UIViewRepresentable {
         calendarView.availableDateRange = dateInterval
         calendarView.setVisibleDateComponents(visibleDate, animated: true)
         calendarView.layer.cornerRadius = 10
-        calendarView.translatesAutoresizingMaskIntoConstraints = true
- 
-        
+
         if canSelect {
             calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)
         }
         calendarView.delegate = context.coordinator
 
-        return calendarView
+        let rootView = UIView()
+        rootView.addSubview(calendarView)
+
+        // adding constraints to profileImageView
+        calendarView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+          calendarView.leadingAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.leadingAnchor, constant: 0),
+          calendarView.trailingAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.trailingAnchor, constant: 0),
+          calendarView.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor, constant: 0),
+          calendarView.bottomAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.bottomAnchor, constant: 0)
+        ])
+
+        return rootView
     }// end makeUIView
+
     
-//    private func setupUIComponents() {
-//        let calendarView = UICalendarView()
-//
-//       // adding constraints to profileImageView
-//       calendarView.translatesAutoresizingMaskIntoConstraints = false
-//       calendarView.widthAnchor.constraint(equalToConstant: 150).isActive = true
-//       calendarView.heightAnchor.constraint(equalToConstant: 150).isActive = true
-//       calendarView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-//       calendarView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100).isActive = true
-//    }
-    
-    
-    func updateUIView(_ uiView: UIViewType, context: Context) {
-        uiView.availableDateRange = dateInterval
-        uiView.reloadDecorations(forDateComponents: [visibleDate], animated: true)
+    func updateUIView(_ uiView: UIView, context: Context) {
+        guard let calendarView = uiView.subviews.first as? UICalendarView else { return }
+        calendarView.availableDateRange = dateInterval
+        calendarView.reloadDecorations(forDateComponents: [visibleDate], animated: true)
     } // end updateUIView
     
 }
