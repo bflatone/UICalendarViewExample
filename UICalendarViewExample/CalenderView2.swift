@@ -10,15 +10,13 @@ import SwiftUI
 
 struct CalendarView2: UIViewRepresentable {
 
-    /// and property to view and set Gregorian calendar as default
-    var calendarIdentifier: Calendar.Identifier = .gregorian
+    @Environment(\.calendar) fileprivate var calendar
+
     var canSelect: Bool = false
     
     @Binding var selectedDate: Date?
     
     var dateInterval : DateInterval {
-        
-        let calendar = Calendar(identifier: calendarIdentifier)
         let startDate = Date(timeIntervalSince1970: 1677686400)
         let endDate = Date(timeIntervalSince1970: 1696089600)
         return DateInterval(start: startDate, end: endDate)
@@ -36,13 +34,13 @@ struct CalendarView2: UIViewRepresentable {
     
     /// creates a delegate that handles the date selections in the calendar
     func makeCoordinator() -> CalendarCoordinator {
-        return CalendarCoordinator(calendarIdentifier: calendarIdentifier, selectedDate: $selectedDate)
+        return CalendarCoordinator(swiftUIView: self)
     }
     
     func makeUIView(context: Context) -> some UICalendarView {
         let calendarView = UICalendarView()
                         
-        calendarView.calendar = Calendar(identifier: calendarIdentifier)
+        calendarView.calendar = calendar
         calendarView.locale = .current
         calendarView.fontDesign = .rounded
         calendarView.layer.cornerRadius = 12
@@ -85,22 +83,17 @@ struct CalendarView2: UIViewRepresentable {
 /// B) decorations in the UICalendar: by inheritance/ override from UICalendarViewDelegate
 final class CalendarCoordinator: NSObject, UICalendarSelectionSingleDateDelegate, UICalendarViewDelegate {
     
-    @Binding var selectedDate: Date?
-    var calendarIdentifier: Calendar.Identifier
-    var calendar: Calendar {
-        Calendar(identifier: calendarIdentifier)
+    var swiftUIView: CalendarView2
+    
+    init(swiftUIView: CalendarView2){
+        self.swiftUIView = swiftUIView
     }
-    
-    init(calendarIdentifier: Calendar.Identifier, selectedDate: Binding<Date?>){
-        self.calendarIdentifier = calendarIdentifier
-        self._selectedDate = selectedDate
-    }
-    
-    
-    /// only days on the weekend can be selected, in this example
+
+    /// only days the weekdays can be selected, in this example
     /// other examples could be days that do not have time available or public holidays
     func dateSelection(_ selection: UICalendarSelectionSingleDate,
                        canSelectDate dateComponents: DateComponents?) -> Bool {
+        let calendar = swiftUIView.calendar
         guard
             let dateComponents,
             let date = calendar.date(from: dateComponents)
@@ -111,11 +104,12 @@ final class CalendarCoordinator: NSObject, UICalendarSelectionSingleDateDelegate
     // manage the event of selection a single date
     func dateSelection(_ selection: UICalendarSelectionSingleDate,
                        didSelectDate dateComponents: DateComponents?) {
+        let calendar = swiftUIView.calendar
         guard
             let dateComponents,
             let date = calendar.date(from: dateComponents)
         else {return}
-        self.selectedDate = date
+        swiftUIView.selectedDate = date
     }
     
     func calendarView(_ calendarView: UICalendarView,
