@@ -25,13 +25,14 @@ struct ContentView: View {
             VStack{
                 Text(selectedDate!.formatted(date: .complete, time: .omitted))
                     .font(.title)
-                ScrollView{
-                    VStack {
-                        CalendarView()
-                    }
+                ScrollView {
+                    CalendarView()
+                        .frame(minWidth: 220, minHeight: 280)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: 300)
+                        .border(.red)
                 }
-//                .frame(maxWidth: 300)
-                .border(.red)
+                .border(.teal)
                 Text("See how it aligns to text below")
             }
 
