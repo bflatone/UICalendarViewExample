@@ -47,7 +47,7 @@ struct CalendarView2: UIViewRepresentable {
         calendarView.backgroundColor = .green
         calendarView.availableDateRange = dateInterval
         calendarView.setVisibleDateComponents(visibleDate, animated: true)
-        calendarView.layer.cornerRadius = 10
+        calendarView.layer.cornerRadius = 12
 
         if canSelect {
             calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)

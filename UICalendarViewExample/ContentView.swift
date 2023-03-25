@@ -35,25 +35,27 @@ struct ContentView: View {
                 .border(.teal)
                 Text("See how it aligns to text below")
             }
-
-//            .frame(width:300)
             .tabItem {
                 Label("Cal1", systemImage: "calendar")
                     .toolbar{
                             Text("item 1")
                     }
             }
+
             VStack{
                 Text(selectedDate!.formatted(date: .complete, time: .omitted))
                     .font(.title)
-                CalendarView2(canSelect: true, selectedDate: $selectedDate)
-                    .frame(width:300, height: 400)
-                    .border(.red)
-                
+                ScrollView {
+                    CalendarView2(canSelect: true, selectedDate: $selectedDate)
+                        .frame(minWidth: 220, minHeight: 280)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: 300)
+                        .border(.red)
+                }
+                .border(.teal)
                 Text("See how it aligns to text below")
                 
             }
-            .frame(width:300)
             .tabItem {
                 Label("Cal2", systemImage: "calendar")
             }
