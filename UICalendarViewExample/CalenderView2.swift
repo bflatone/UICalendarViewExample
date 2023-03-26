@@ -37,7 +37,7 @@ struct CalendarView2: UIViewRepresentable {
         return CalendarCoordinator(swiftUIView: self)
     }
     
-    func makeUIView(context: Context) -> UIView {
+    func makeUIView(context: Context) -> UICalendarView {
         let calendarView = UICalendarView()
                         
         calendarView.calendar = calendar
@@ -47,31 +47,22 @@ struct CalendarView2: UIViewRepresentable {
         calendarView.backgroundColor = .green
         calendarView.availableDateRange = dateInterval
         calendarView.setVisibleDateComponents(visibleDate, animated: true)
-        calendarView.layer.cornerRadius = 12
+
+        // Make sure our calendar view adapts nicely to size constraints.
+        calendarView.contentMode = .scaleAspectFit
+        calendarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+        calendarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         if canSelect {
             calendarView.selectionBehavior = UICalendarSelectionSingleDate(delegate: context.coordinator)
         }
         calendarView.delegate = context.coordinator
 
-        let rootView = UIView()
-        rootView.addSubview(calendarView)
-
-        // adding constraints to profileImageView
-        calendarView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-          calendarView.leadingAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.leadingAnchor, constant: 0),
-          calendarView.trailingAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-          calendarView.topAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.topAnchor, constant: 0),
-          calendarView.bottomAnchor.constraint(equalTo: rootView.safeAreaLayoutGuide.bottomAnchor, constant: 0)
-        ])
-
-        return rootView
+        return calendarView
     }// end makeUIView
 
     
-    func updateUIView(_ uiView: UIView, context: Context) {
-        guard let calendarView = uiView.subviews.first as? UICalendarView else { return }
+    func updateUIView(_ calendarView: UICalendarView, context: Context) {
         calendarView.availableDateRange = dateInterval
         calendarView.reloadDecorations(forDateComponents: [visibleDate], animated: true)
     } // end updateUIView
